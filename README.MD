@@ -1,6 +1,6 @@
 # ng4-resti
-An eloquent library for sending Angular 4 HTTP requests
-It's as simple as
+### An eloquent library for sending Angular 4 HTTP requests
+#### It's as simple as
 ```typescript
 this.resti.get('/document')
     .query('prefer','simple')

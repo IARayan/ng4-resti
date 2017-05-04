@@ -1,4 +1,4 @@
-# ng2-resti
+# ng4-resti
 
 ## Installation
 

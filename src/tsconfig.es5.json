@@ -21,8 +21,8 @@
     "annotateForClosureCompiler": true,
     "strictMetadataEmit": true,
     "skipTemplateCodegen": true,
-    "flatModuleOutFile": "ng2-resti.js",
-    "flatModuleId": "ng2-resti"
+    "flatModuleOutFile": "ng4-resti.js",
+    "flatModuleId": "ng4-resti"
   },
   "files": [
     "./index.ts"

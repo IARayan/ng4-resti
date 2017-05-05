@@ -15,21 +15,33 @@ export class RestiCall {
     private _method: RequestMethod;
     private _body: any = {};
     private _http: Http;
-    private _callback: (res: Response) => void;
+    private _callback: (result) => void;
     private _options: RequestOptions;
     private _transform: (res: Response) => any;
 
-    constructor(options: { url: string, http: Http, method: RequestMethod }) {
+    constructor(options?: {
+        url: string,
+        http: Http,
+        method: RequestMethod,
+        defaultTransform?: (res: Response) => any,
+        defaultCallback?: (result) => void
+    }) {
         if (options) {
             this._url = options.url;
             this._http = options.http;
             this._method = options.method;
+            if (options.defaultTransform) {
+                this._transform = options.defaultTransform;
+            }
+            if (options.defaultCallback) {
+                this._callback = options.defaultCallback;
+            }
         }
     }
 
     /**
      *  Sets the URL to be called in this request
-     * @param {string} url - Url to be called, if a baseUrl is specified in the configuration this will be added after the baseUrl
+     * @param {string} url - URL to be called, if a baseURL is specified in the configuration this will be added after the baseURL
      * @returns {RestiCall}
      */
     url(url: string) {
@@ -60,7 +72,7 @@ export class RestiCall {
     }
 
     /**
-     * Adds a segment to request URI
+     * Adds a segment to request URL
      * @param path - Path to be added to the URL
      * @returns {RestiCall}
      */
@@ -107,8 +119,8 @@ export class RestiCall {
      * @returns {RestiCall}
      * @example
      * let resti = new RestiCall({ url: '/path.json', this.http, RequestMethod.Get });
-     * resti.callback((res: Response)=>{
-     *          console.log(res.json());
+     * resti.callback((result)=>{
+     *          console.log(result);
      *      }).send();
      */
     callback(callback: (result) => void): RestiCall {
@@ -122,8 +134,8 @@ export class RestiCall {
      * @returns {RestiCall}
      * @example
      * let resti = new RestiCall({ url: '/path.json', this.http, RequestMethod.Get });
-     * resti.callback((res: Response)=>{
-     *          console.log(res.json());
+     * resti.transform((res: Response)=>{
+     *          return res.json();
      *      }).send();
      */
     transform(transform: (res: Response) => any): RestiCall {
@@ -136,19 +148,30 @@ export class RestiCall {
      * otherwise you must subscribe to the result of this function.
      * @return {Observable<Response>|Subscription}
      */
-    send(): Observable<any> | Subscription {
+    send(): Observable<any> | Subscription | void {
         // Format the url
-        this.addUrlSegments();
-        this.addUrlQueryParameters();
+        this.addURLSegments();
+        this.addURLQueryParameters();
+        // Set the request options
         this.setOptions();
+        if (this._transform) {
+            this._http.request(this._url, this._options).subscribe((res: Response) => {
+                const result = this._transform(res);
+                if (this._callback) {
+                    this._callback(result);
+                    return;
+                }
+                return result;
+            });
+        }
         if (this._callback) {
-            return this._http.request(this._url, this._options).subscribe(this._callback);
+            this._http.request(this._url, this._options).subscribe(this._callback);
         } else {
             return this._http.request(this._url, this._options);
         }
     }
 
-    private addUrlSegments() {
+    private addURLSegments() {
         if (!this._segments.length) {
             return;
         }
@@ -161,7 +184,7 @@ export class RestiCall {
         this._url = this.clearLastIndexIf(this._url, '/');
     }
 
-    private addUrlQueryParameters() {
+    private addURLQueryParameters() {
         if (!this._queries.length) {
             return;
         }
@@ -186,7 +209,7 @@ export class RestiCall {
 
     private clearLastIndexIf(subject: string, search: string) {
         if (subject.endsWith(search)) {
-            return subject.substring(0, this._url.lastIndexOf(search));
+            return subject.substring(0, subject.lastIndexOf(search));
         }
         return subject;
     }

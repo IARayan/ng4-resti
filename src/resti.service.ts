@@ -4,7 +4,7 @@ import {RestiCall} from './resti.call';
 
 @Injectable()
 export class RestiService {
-    configurations: RestiConfigurations = {baseUrl: ''};
+    configurations: RestiConfigurations = {};
 
     constructor(private http: Http) {
     }
@@ -14,7 +14,7 @@ export class RestiService {
      * @param configurations
      */
     config(configurations: RestiConfigurations) {
-        this.configurations.baseUrl = configurations.baseUrl;
+        this.configurations = Object.assign(this.configurations, configurations);
     }
 
     /**
@@ -28,99 +28,115 @@ export class RestiService {
 
     /**
      * Creates a new GET RestiCall request
-     * @param url - Url to be called, if a baseUrl is specified in the configuration this will be added after the baseUrl
+     * @param url - URL to be called, if a baseURL is specified in the configuration this will be added after the baseURL
      * @return {RestiCall}
      */
     get(url: string): RestiCall {
         return new RestiCall({
-            url: this.getConfig('baseUrl') ? this.getConfig('baseUrl') + url : url,
+            url: this.getConfig('baseURL') ? this.getConfig('baseURL') + url : url,
             http: this.http,
-            method: RequestMethod.Get
+            method: RequestMethod.Get,
+            defaultTransform: this.getConfig('defaultTransform') ? this.getConfig('defaultTransform') : null,
+            defaultCallback: this.getConfig('defaultCallback') ? this.getConfig('defaultCallback') : null
         });
     }
 
     /**
      * Creates a new HEAD RestiCall request
-     * @param url - Url to be called, if a baseUrl is specified in the configuration this will be added after the baseUrl
+     * @param url - URL to be called, if a baseURL is specified in the configuration this will be added after the baseURL
      * @return {RestiCall}
      */
     head(url: string): RestiCall {
         return new RestiCall({
-            url: this.getConfig('baseUrl') ? this.getConfig('baseUrl') + url : url,
+            url: this.getConfig('baseURL') ? this.getConfig('baseURL') + url : url,
             http: this.http,
-            method: RequestMethod.Head
+            method: RequestMethod.Head,
+            defaultTransform: this.getConfig('defaultTransform') ? this.getConfig('defaultTransform') : null,
+            defaultCallback: this.getConfig('defaultCallback') ? this.getConfig('defaultCallback') : null
         });
     }
 
     /**
      * Creates a new DELETE RestiCall request
-     * @param url - Url to be called, if a baseUrl is specified in the configuration this will be added after the baseUrl
+     * @param url - URL to be called, if a baseURL is specified in the configuration this will be added after the baseURL
      * @return {RestiCall}
      */
     delete(url: string): RestiCall {
         return new RestiCall({
-            url: this.getConfig('baseUrl') ? this.getConfig('baseUrl') + url : url,
+            url: this.getConfig('baseURL') ? this.getConfig('baseURL') + url : url,
             http: this.http,
-            method: RequestMethod.Delete
+            method: RequestMethod.Delete,
+            defaultTransform: this.getConfig('defaultTransform') ? this.getConfig('defaultTransform') : null,
+            defaultCallback: this.getConfig('defaultCallback') ? this.getConfig('defaultCallback') : null
         });
     }
 
     /**
      * Creates a new OPTIONS RestiCall request
-     * @param url - Url to be called, if a baseUrl is specified in the configuration this will be added after the baseUrl
+     * @param url - URL to be called, if a baseURL is specified in the configuration this will be added after the baseURL
      * @return {RestiCall}
      */
     options(url: string): RestiCall {
         return new RestiCall({
-            url: this.getConfig('baseUrl') ? this.getConfig('baseUrl') + url : url,
+            url: this.getConfig('baseURL') ? this.getConfig('baseURL') + url : url,
             http: this.http,
-            method: RequestMethod.Options
+            method: RequestMethod.Options,
+            defaultTransform: this.getConfig('defaultTransform') ? this.getConfig('defaultTransform') : null,
+            defaultCallback: this.getConfig('defaultCallback') ? this.getConfig('defaultCallback') : null
         });
     }
 
     /**
      * Creates a new POST RestiCall request
-     * @param url - Url to be called, if a baseUrl is specified in the configuration this will be added after the baseUrl
+     * @param url - URL to be called, if a baseURL is specified in the configuration this will be added after the baseURL
      * @param body - data of the request body if any.
      * @return {RestiCall}
      */
     post(url: string, body?: any): RestiCall {
         return new RestiCall({
-            url: this.getConfig('baseUrl') ? this.getConfig('baseUrl') + url : url,
+            url: this.getConfig('baseURL') ? this.getConfig('baseURL') + url : url,
             http: this.http,
-            method: RequestMethod.Post
+            method: RequestMethod.Post,
+            defaultTransform: this.getConfig('defaultTransform') ? this.getConfig('defaultTransform') : null,
+            defaultCallback: this.getConfig('defaultCallback') ? this.getConfig('defaultCallback') : null
         }).body(body);
     }
 
     /**
      * Creates a new PATCH RestiCall request
-     * @param url - Url to be called, if a baseUrl is specified in the configuration this will be added after the baseUrl
+     * @param url - URL to be called, if a baseURL is specified in the configuration this will be added after the baseURL
      * @param body - data of the request body if any.
      * @return {RestiCall}
      */
     patch(url: string, body?: any): RestiCall {
         return new RestiCall({
-            url: this.getConfig('baseUrl') ? this.getConfig('baseUrl') + url : url,
+            url: this.getConfig('baseURL') ? this.getConfig('baseURL') + url : url,
             http: this.http,
-            method: RequestMethod.Patch
+            method: RequestMethod.Patch,
+            defaultTransform: this.getConfig('defaultTransform') ? this.getConfig('defaultTransform') : null,
+            defaultCallback: this.getConfig('defaultCallback') ? this.getConfig('defaultCallback') : null
         }).body(body);
     }
 
     /**
      * Creates a new PUT RestiCall request
-     * @param url - Url to be called, if a baseUrl is specified in the configuration this will be added after the baseUrl
+     * @param url - URL to be called, if a baseURL is specified in the configuration this will be added after the baseURL
      * @param body - data of the request body if any.
      * @return {RestiCall}
      */
     put(url: string, body?: any): RestiCall {
         return new RestiCall({
-            url: this.getConfig('baseUrl') ? this.getConfig('baseUrl') + url : url,
+            url: this.getConfig('baseURL') ? this.getConfig('baseURL') + url : url,
             http: this.http,
-            method: RequestMethod.Put
+            method: RequestMethod.Put,
+            defaultTransform: this.getConfig('defaultTransform') ? this.getConfig('defaultTransform') : null,
+            defaultCallback: this.getConfig('defaultCallback') ? this.getConfig('defaultCallback') : null
         }).body(body);
     }
 }
 
 export interface RestiConfigurations {
-    baseUrl: string;
+    baseURL?: string;
+    defaultTransform?: (res: Response) => any;
+    defaultCallback?: () => void;
 }

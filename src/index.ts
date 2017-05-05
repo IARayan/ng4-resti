@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RestiService } from './resti.service';
 
 export * from './resti.service';
+export * from './resti.call';
 
 @NgModule({
   imports: [

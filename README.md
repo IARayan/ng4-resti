@@ -1,4 +1,12 @@
 # ng4-resti
+### An eloquent library for sending Angular 4 HTTP requests
+#### It's as simple as
+```typescript
+this.resti.get('/document')
+    .query('prefer','simple')
+    .callback(result=>console.log(result))
+    .send();
+````
 
 ## Installation
 
@@ -10,22 +18,22 @@ $ npm install ng4-resti --save
 
 ## Setup
 
-Add the RestiService to the list of the providers of your AngularModule
+Add the NgResti to the list of imports of your Angular4 Module
 ```typescript
-// Import RestiService
-import { RestiService } from 'ng4-resti';
+// Import NgResti
+import { NgResti } from 'ng4-resti';
 
 @NgModule({
   ...
-  // Specify RestiService as a provider
-  providers: [RestiService],
+  // Specify NgResti as an import
+  imports: [NgResti],
   ...
 })
 export class AppModule { }
 ```
 ## Usage
 
-Using in a service
+### Using in a service
 
 ```typescript
 import {RestiService} from 'ng4-resti';
@@ -36,7 +44,8 @@ export class ApiService {
  }
 ```
 
-Sending a GET request
+### Sending a GET request
+
 ```typescript
 getUsers(){
     this.api.get('/users')  // request URL is /users
@@ -44,7 +53,9 @@ getUsers(){
     .subscribe(res=>console.log(res)); // subscribe to the result
 }
 ```
-Sending a GET request (extended example)
+
+### Sending a GET request (extended example)
+
 ```typescript
 getUsers(){
     this.api.get('/users')      // request URL is /users
@@ -57,7 +68,8 @@ getUsers(){
 }
 ```
 
-Sending a POST request
+### Sending a POST request
+
 ```typescript
 getUsers(){
     this.api.post('/users')  // request URL is /users
@@ -65,7 +77,9 @@ getUsers(){
     .subscribe(res=>console.log(res)); // subscribe to the result
 }
 ```
-Sending a POST request (extended example)
+
+### Sending a POST request (extended example)
+
 ```typescript
 getUsers(){
     // request URL is /users, the body is set to the provided object

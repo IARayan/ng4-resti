@@ -32,5 +32,4 @@ Desktop.ini
 **/*.ngfactory.ts
 
 # Build files
-dist/*
 *.md

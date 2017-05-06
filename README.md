@@ -26,7 +26,7 @@ import { NgResti } from 'ng4-resti';
 @NgModule({
  ...
  // Specify NgResti as an import
- imports: [NgResti],
+ imports: [NgResti.forRoot()],
  ...
 })
 export class AppModule { }

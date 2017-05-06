@@ -129,7 +129,7 @@ export class RestiCall {
     }
 
     /**
-     * Adds a transform function that applies to the request result before the final callback.
+     * Adds a transform function that applies to the request result before the callback.
      * @param {(res:Response)=>any} transform - Callback function to transform the response
      * @returns {RestiCall}
      * @example
@@ -144,33 +144,48 @@ export class RestiCall {
     }
 
     /**
-     * Sends the request, if a callback is provided it calls it,
-     * otherwise you must subscribe to the result of this function.
+     * Sends the request, if a callback is provided then it's called.
      * @return {Observable<Response>|Subscription}
      */
-    send(): Observable<any> | Subscription | void {
+    send(): Response | Observable<any> | any {
         // Format the url
         this.addURLSegments();
         this.addURLQueryParameters();
         // Set the request options
         this.setOptions();
-        if (this._transform) {
-            this._http.request(this._url, this._options).subscribe((res: Response) => {
-                const result = this._transform(res);
-                if (this._callback) {
-                    this._callback(result);
-                    return;
-                }
-                return result;
-            });
-        }
-        if (this._callback) {
-            this._http.request(this._url, this._options).subscribe(this._callback);
-        } else {
-            return this._http.request(this._url, this._options);
-        }
+        this._http.request(this._url, this._options).subscribe((res: Response) => this.routeResponse(res));
     }
 
+    /**
+     * Routes the response to the Transform and then routes the result to the Callback
+     * @param res
+     * @return {Response|any}
+     */
+    private routeResponse(res: Response): Response | any {
+        return this.callbackRoute(this.transformRoute(res));
+    }
+
+    /**
+     * Routes the response to the Transform
+     * @param res
+     * @return {Response}
+     */
+    private transformRoute(res: Response): Response | any {
+        return this._transform ? this._transform(res) : res;
+    }
+
+    /**
+     * Routes the response | transformed response to the Callback
+     * @param result
+     * @return {any}
+     */
+    private callbackRoute(result: Response | any): Response | any {
+        return this._callback ? this._callback(result) : result;
+    }
+
+    /**
+     * Formats the URL segments of the request
+     */
     private addURLSegments() {
         if (!this._segments.length) {
             return;
@@ -184,6 +199,9 @@ export class RestiCall {
         this._url = this.clearLastIndexIf(this._url, '/');
     }
 
+    /**
+     * Formats the query parameters of the request
+     */
     private addURLQueryParameters() {
         if (!this._queries.length) {
             return;
@@ -195,6 +213,10 @@ export class RestiCall {
         this._url = this.clearLastIndexIf(this._url, '&');
     }
 
+    /**
+     * Parses the headers from the RestiCall and returns a Header object
+     * @return {Headers}
+     */
     private getHeaders(): Headers {
         let headers: Headers = new Headers();
         for (let i = 0; i < this._headers.length; i++) {
@@ -203,10 +225,20 @@ export class RestiCall {
         return headers;
     }
 
+    /**
+     * Sets the RequestOptions for this request
+     */
     private setOptions() {
         this._options = new RequestOptions({method: this._method, headers: this.getHeaders(), body: this._body});
     }
 
+    /**
+     * Clears the last index of a string if it matches the provided search parameter
+     * @deprecated Looking for a better way to do this.
+     * @param subject
+     * @param search
+     * @return {string}
+     */
     private clearLastIndexIf(subject: string, search: string) {
         if (subject.endsWith(search)) {
             return subject.substring(0, subject.lastIndexOf(search));
